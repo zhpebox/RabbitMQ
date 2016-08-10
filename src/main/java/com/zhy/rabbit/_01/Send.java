@@ -7,7 +7,7 @@ import com.rabbitmq.client.ConnectionFactory;
 public class Send
 {
 	//队列名称
-	private final static String QUEUE_NAME = "hellox";
+	private final static String QUEUE_NAME = "tx";
 
 	public static void main(String[] args) throws java.io.IOException
 	{
@@ -17,6 +17,8 @@ public class Send
 		ConnectionFactory factory = new ConnectionFactory();
 		//设置MabbitMQ所在主机ip或者主机名
 		factory.setHost("localhost");
+		factory.setUsername("guest");
+		factory.setPassword("guest");
 		
 		//创建一个连接
 		Connection connection = factory.newConnection();
@@ -25,9 +27,9 @@ public class Send
 		//指定一个队列
 		channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 		//发送的消息
-		String message = "hello world!";
+		String message = "hello V world!zhp";
 		//往队列中发出一条消息
-		channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
+		channel.basicPublish("t", QUEUE_NAME, null, message.getBytes());
 		System.out.println(" [x] Sent '" + message + "'");
 		//关闭频道和连接
 		channel.close();

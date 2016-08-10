@@ -1,21 +1,27 @@
-package com.zhy.rabbit._01;
+package com.bean.testModelsend;
 
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
+
+import com.bean.BookBean;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.QueueingConsumer;
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 
 public class Recv
 {
 	//队列名称
-	private final static String QUEUE_NAME = "hellox";
+	private final static String QUEUE_NAME = "ty";
 
 	public static void main(String[] argv) throws java.io.IOException,
-			java.lang.InterruptedException
+			java.lang.InterruptedException, ClassNotFoundException
 	{
 		//打开连接和创建频道，与发送端一样
 		ConnectionFactory factory = new ConnectionFactory();
-		factory.setHost("192.168.0.2");
+		factory.setHost("localhost");
+		factory.setPort(5672);
 		factory.setUsername("admin");
 		factory.setPassword("admin");
 		
@@ -34,6 +40,16 @@ public class Recv
 			//nextDelivery是一个阻塞方法（内部实现其实是阻塞队列的take方法）
 			QueueingConsumer.Delivery delivery = consumer.nextDelivery();
 			String message = new String(delivery.getBody());
+			String redStr = java.net.URLDecoder.decode(message,"UTF-8");
+			
+			ByteArrayInputStream input = new ByteArrayInputStream(redStr.getBytes("ISO-8859-1"));
+			ObjectInputStream objectIn = new ObjectInputStream(input);
+			BookBean obj = (BookBean)objectIn.readObject();
+				
+			System.out.println(obj.getBookId());
+			System.out.println(obj.getBookName());
+			System.out.println(obj.getBookEditer()[1]);
+			
 			System.out.println(" [x] Received '" + message + "'");
 		}
 
